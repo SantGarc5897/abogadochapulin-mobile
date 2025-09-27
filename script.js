@@ -212,4 +212,142 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function continueGame() {
-        levelUpScreen.style.display =
+        levelUpScreen.style.display = 'none';
+        isGameRunning = true;
+        jumpButton.style.display = 'flex'; // Muestra el botón de salto
+        resumeGameIntervals();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+        // Solicitar pantalla completa y bloquear orientación
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+                console.warn(`Advertencia: No se pudo entrar en pantalla completa: ${err.message}`);
+            });
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        }
+        try {
+            if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                screen.orientation.lock('landscape').catch(err => {
+                    console.warn(`Advertencia: No se pudo bloquear la orientación: ${err.message}`);
+                });
+            }
+        } catch (err) {
+            console.warn(`Advertencia: La API de orientación no es compatible: ${err.message}`);
+        }
+
+        // Resetear variables del juego
+        currentLevel = 1; scoreNeededForNextLevel = 900;
+        score = 0; moneyCollected = 0; totalScoreAcrossLevels = 0;
+        characterY = 0; characterVelocityY = 0;
+        gameSpeed = 5; jumpCount = 0;
+        isPoweredUp = false; moneySinceLastPowerUp = 0;
+        isPaused = false;
+        clearTimeout(powerUpTimer);
+        character.className = 'running';
+        powerUpMessage.classList.add('hidden');
+        scoreDisplay.textContent = 0; moneyDisplay.textContent = 0;
+        [...obstacles, ...collectibles].forEach(el => el.remove());
+        obstacles = []; collectibles = [];
+        startScreen.style.display = 'none'; gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; pauseScreen.style.display = 'none';
+        
+        jumpButton.style.display = 'flex'; // Muestra el botón de salto
+        isGameRunning = true;
+
+        resumeGameIntervals();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function resumeGameIntervals() {
+        if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
+        const speedIncreaseRate = BASE_SPEED_INCREASE * currentLevel;
+        const obstacleInterval = setInterval(() => createItem('obstacle'), 2000);
+        const collectibleInterval = setInterval(() => createItem('collectible'), 3500);
+        const scoreInterval = setInterval(updateScore, 100);
+        const speedIncreaseInterval = setInterval(() => { if (isGameRunning) gameSpeed += speedIncreaseRate; }, 2000);
+        window.gameIntervals = [obstacleInterval, collectibleInterval, scoreInterval, speedIncreaseInterval];
+    }
+
+    function endGame() {
+        if (!isGameRunning) return;
+        isGameRunning = false;
+        jumpButton.style.display = 'none'; // Oculta el botón de salto
+        deactivatePowerUp();
+        if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
+        const finalScore = totalScoreAcrossLevels + score;
+        finalScoreDisplay.textContent = finalScore;
+        saveScoreToSession(finalScore, moneyCollected);
+        displayLeaderboard();
+        gameOverScreen.style.display = 'flex';
+    }
+
+    function winGame() {
+        if (!isGameRunning) return;
+        isGameRunning = false;
+        jumpButton.style.display = 'none'; // Oculta el botón de salto
+        deactivatePowerUp();
+        if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
+        winScreen.style.display = 'flex';
+    }
+
+    function returnToStartScreen() {
+        gameOverScreen.style.display = 'none';
+        winScreen.style.display = 'none';
+        startScreen.style.display = 'flex';
+        jumpButton.style.display = 'none'; // Asegura que el botón esté oculto
+    }
+
+    function saveScoreToSession(points, money) {
+        const highScores = JSON.parse(sessionStorage.getItem('highScores')) || [];
+        highScores.push({ points, money });
+        highScores.sort((a, b) => b.points - a.points);
+        sessionStorage.setItem('highScores', JSON.stringify(highScores.slice(0, 5)));
+    }
+
+    function displayLeaderboard() {
+        const highScores = JSON.parse(sessionStorage.getItem('highScores')) || [];
+        scoreList.innerHTML = highScores.length ? highScores.map(s => `<li>Puntos: ${s.points} - 💰: ${s.money}</li>`).join('') : '<li>Aún no hay puntuaciones.</li>';
+    }
+
+    function performJump() { if (isGameRunning && jumpCount < maxJumps) { characterVelocityY = jumpStrength; jumpCount++; } }
+
+    function handleKeyPress(e) {
+        if (e.code === 'Space' && isGameRunning) { e.preventDefault(); performJump(); }
+        if (e.code === 'KeyP') { togglePause(); }
+    }
+
+    function handleScreenInteraction(e) {
+        if (isGameRunning && e.target.id !== 'jump-button' && e.target.id !== 'pause-button' && !e.target.closest('#pause-button')) {
+            e.preventDefault();
+            clickCountForExit++;
+            if (clickCountForExit === 1) { clickTimer = setTimeout(() => { clickCountForExit = 0; }, 400); } 
+            else if (clickCountForExit === 3) { clearTimeout(clickTimer); clickCountForExit = 0; endGame(); return; }
+        }
+    }
+
+    // --- Event Listeners ---
+    document.addEventListener('keydown', handleKeyPress);
+    gameContainer.addEventListener('mousedown', handleScreenInteraction);
+    gameContainer.addEventListener('touchstart', handleScreenInteraction, { passive: false });
+    startGameButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', returnToStartScreen);
+    playAgainButton.addEventListener('click', returnToStartScreen);
+    continueButton.addEventListener('click', continueGame);
+    pauseButton.addEventListener('click', togglePause);
+    resumeButton.addEventListener('click', togglePause);
+    jumpButton.addEventListener('click', performJump);
+
+    // Ajuste del tamaño del área de juego
+    function adjustGameSize() {
+        const gameArea = document.getElementById('game-container');
+        gameArea.style.height = `${window.innerHeight}px`;
+    }
+    adjustGameSize();
+    window.addEventListener('resize', adjustGameSize);
+    window.addEventListener('orientationchange', adjustGameSize);
+
+    startScreen.style.display = 'flex';
+});

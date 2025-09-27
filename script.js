@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
     const startGameButton = document.getElementById('start-game-button');
-    const fullscreenButton = document.getElementById('fullscreen-button'); // Nuevo botón
     const pauseButton = document.getElementById('pause-button');
     const pauseScreen = document.getElementById('pause-screen');
     const resumeButton = document.getElementById('resume-button');
@@ -221,8 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function startGame() {
-        // La lógica de pantalla completa se ha movido al Event Listener del nuevo botón
-        
         // Resetear variables del juego
         currentLevel = 1; scoreNeededForNextLevel = 900;
         score = 0; moneyCollected = 0; totalScoreAcrossLevels = 0;
@@ -282,9 +279,6 @@ document.addEventListener('DOMContentLoaded', function() {
         winScreen.style.display = 'none';
         startScreen.style.display = 'flex';
         jumpButton.style.display = 'none'; 
-        // Reestablecer botones de inicio
-        fullscreenButton.style.display = 'block';
-        startGameButton.style.display = 'none';
     }
 
     function saveScoreToSession(points, money) {
@@ -320,25 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
     gameContainer.addEventListener('mousedown', handleScreenInteraction);
     gameContainer.addEventListener('touchstart', handleScreenInteraction, { passive: false });
     
-    fullscreenButton.addEventListener('click', () => {
-        const element = document.documentElement;
-        if (element.requestFullscreen) {
-            element.requestFullscreen().catch(err => console.warn(`Error al activar pantalla completa: ${err.message}`));
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-        }
-        try {
-            if (screen.orientation && typeof screen.orientation.lock === 'function') {
-                screen.orientation.lock('landscape').catch(err => console.warn(`Error al bloquear orientación: ${err.message}`));
-            }
-        } catch (err) {
-            console.warn(`API de orientación no es compatible: ${err.message}`);
-        }
-
-        fullscreenButton.style.display = 'none';
-        startGameButton.style.display = 'block';
-    });
-
     startGameButton.addEventListener('click', startGame);
     restartButton.addEventListener('click', returnToStartScreen);
     playAgainButton.addEventListener('click', returnToStartScreen);

@@ -14,7 +14,7 @@ body {
 /* --- CONTENEDOR DEL JUEGO HORIZONTAL --- */
 #game-container {
     width: 100vw;
-    height: 100vh;
+    height: 100svh; /* Usa la altura visible para evitar cortes por la UI del navegador */
     border: none;
     position: relative;
     overflow: hidden;
@@ -299,4 +299,23 @@ body {
     width: 100%;
 }
 
-#game-over-screen h1 { color: #e74c3c; font-size: 4vw; } /* Tamaño
+#game-over-screen h1 { color: #e74c3c; font-size: 4vw; } /* Tamaño de fuente ajustado */
+#game-over-screen p { color: #333; }
+.final-score-text { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; }
+
+#leaderboard.transparent-background {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+#leaderboard h2 { color: #333; margin-top: 0; margin-bottom: 10px; }
+#leaderboard ol li { color: #555; text-align: left; }
+
+@media (max-width: 768px) {
+    #start-game-button { font-size: 18px; padding: 15px 30px; }
+    #power-up-message { font-size: 24px; }
+}

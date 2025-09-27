@@ -16,10 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
     const startGameButton = document.getElementById('start-game-button');
+    const fullscreenButton = document.getElementById('fullscreen-button'); // Nuevo botón
     const pauseButton = document.getElementById('pause-button');
     const pauseScreen = document.getElementById('pause-screen');
     const resumeButton = document.getElementById('resume-button');
-    const jumpButton = document.getElementById('jump-button'); // Botón de salto
+    const jumpButton = document.getElementById('jump-button'); 
 
     // --- Configuración del Juego ---
     const gravity = 0.5;
@@ -172,12 +173,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isPaused) {
             isGameRunning = false;
-            jumpButton.style.display = 'none'; // Oculta el botón de salto
+            jumpButton.style.display = 'none'; 
             if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
             pauseScreen.style.display = 'flex';
         } else {
             isGameRunning = true;
-            jumpButton.style.display = 'flex'; // Muestra el botón de salto
+            jumpButton.style.display = 'flex';
             pauseScreen.style.display = 'none';
             resumeGameIntervals();
             requestAnimationFrame(gameLoop);
@@ -195,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function levelUp() {
         isGameRunning = false;
-        jumpButton.style.display = 'none'; // Oculta el botón de salto
+        jumpButton.style.display = 'none'; 
         if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
         if (isPoweredUp) deactivatePowerUp();
         
@@ -214,31 +215,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function continueGame() {
         levelUpScreen.style.display = 'none';
         isGameRunning = true;
-        jumpButton.style.display = 'flex'; // Muestra el botón de salto
+        jumpButton.style.display = 'flex';
         resumeGameIntervals();
         requestAnimationFrame(gameLoop);
     }
 
     function startGame() {
-        // Solicitar pantalla completa y bloquear orientación
-        const element = document.documentElement;
-        if (element.requestFullscreen) {
-            element.requestFullscreen().catch(err => {
-                console.warn(`Advertencia: No se pudo entrar en pantalla completa: ${err.message}`);
-            });
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-        }
-        try {
-            if (screen.orientation && typeof screen.orientation.lock === 'function') {
-                screen.orientation.lock('landscape').catch(err => {
-                    console.warn(`Advertencia: No se pudo bloquear la orientación: ${err.message}`);
-                });
-            }
-        } catch (err) {
-            console.warn(`Advertencia: La API de orientación no es compatible: ${err.message}`);
-        }
-
+        // La lógica de pantalla completa se ha movido al Event Listener del nuevo botón
+        
         // Resetear variables del juego
         currentLevel = 1; scoreNeededForNextLevel = 900;
         score = 0; moneyCollected = 0; totalScoreAcrossLevels = 0;
@@ -254,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         obstacles = []; collectibles = [];
         startScreen.style.display = 'none'; gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; pauseScreen.style.display = 'none';
         
-        jumpButton.style.display = 'flex'; // Muestra el botón de salto
+        jumpButton.style.display = 'flex'; 
         isGameRunning = true;
 
         resumeGameIntervals();
@@ -274,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function endGame() {
         if (!isGameRunning) return;
         isGameRunning = false;
-        jumpButton.style.display = 'none'; // Oculta el botón de salto
+        jumpButton.style.display = 'none';
         deactivatePowerUp();
         if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
         const finalScore = totalScoreAcrossLevels + score;
@@ -287,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function winGame() {
         if (!isGameRunning) return;
         isGameRunning = false;
-        jumpButton.style.display = 'none'; // Oculta el botón de salto
+        jumpButton.style.display = 'none'; 
         deactivatePowerUp();
         if (window.gameIntervals) window.gameIntervals.forEach(clearInterval);
         winScreen.style.display = 'flex';
@@ -297,7 +281,10 @@ document.addEventListener('DOMContentLoaded', function() {
         gameOverScreen.style.display = 'none';
         winScreen.style.display = 'none';
         startScreen.style.display = 'flex';
-        jumpButton.style.display = 'none'; // Asegura que el botón esté oculto
+        jumpButton.style.display = 'none'; 
+        // Reestablecer botones de inicio
+        fullscreenButton.style.display = 'block';
+        startGameButton.style.display = 'none';
     }
 
     function saveScoreToSession(points, money) {
@@ -332,6 +319,26 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('keydown', handleKeyPress);
     gameContainer.addEventListener('mousedown', handleScreenInteraction);
     gameContainer.addEventListener('touchstart', handleScreenInteraction, { passive: false });
+    
+    fullscreenButton.addEventListener('click', () => {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => console.warn(`Error al activar pantalla completa: ${err.message}`));
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        }
+        try {
+            if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                screen.orientation.lock('landscape').catch(err => console.warn(`Error al bloquear orientación: ${err.message}`));
+            }
+        } catch (err) {
+            console.warn(`API de orientación no es compatible: ${err.message}`);
+        }
+
+        fullscreenButton.style.display = 'none';
+        startGameButton.style.display = 'block';
+    });
+
     startGameButton.addEventListener('click', startGame);
     restartButton.addEventListener('click', returnToStartScreen);
     playAgainButton.addEventListener('click', returnToStartScreen);

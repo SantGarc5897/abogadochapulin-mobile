@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abogado Chapulín</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="orientation-message">
+        <div class="phone-icon"></div>
+        <p>Por favor, voltea el teléfono para jugar</p>
+    </div>
+
+    <div id="game-container">
+        <div id="score-display">Puntos: <span id="score">0</span></div>
+        <div id="money-display">💰 <span id="money-count">0</span></div>
+        
+        <div id="pause-button">
+            <div class="pause-line"></div>
+            <div class="pause-line"></div>
+        </div>
+
+        <button id="jump-button">SALTA</button>
+        
+        <div id="character"></div>
+        
+        <div id="power-up-message" class="hidden">¡Viva el nepotismo!</div>
+        
+        <div id="start-screen" class="screen">
+            <h1>Abogado Chapulín</h1>
+            <div id="start-screen-character"></div>
+            <p>Esquiva las patrullas y recoge el dinero</p>
+            <p>Cada 5 dádivas un power up</p>
+            <button id="start-game-button">Iniciar Juego</button>
+        </div>
+        
+        <div id="game-over-screen" class="screen" style="display: none;">
+            <div class="game-over-wrapper">
+                <div class="game-over-panel left">
+                    <div class="text-background">
+                        <h1>¡DETENIDO!</h1>
+                        <p class="final-score-text">Puntaje Final: <span id="final-score">0</span></p>
+                    </div>
+                    <div id="leaderboard" class="transparent-background">
+                        <h2>Mejores Puntuaciones</h2>
+                        <ol id="score-list"></ol>
+                    </div>
+                </div>
+                <div class="game-over-panel right">
+                    <div class="detained-scene-image"></div>
+                    <button id="restart-button">Jugar de Nuevo</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="level-up-screen" class="screen" style="display: none;">
+            <div id="celebration-animation"></div>
+            <h1 id="level-up-title">Le ganaste a la justicia</h1>
+            <p id="level-up-message">¡Vamos por el siguiente Nivel!</p>
+            <button id="continue-button">Continuar</button>
+        </div>
+
+        <div id="win-screen" class="screen" style="display: none;">
+             <div class="game-over-wrapper">
+                <div class="game-over-panel left">
+                    <div class="detained-character-image"></div>
+                </div>
+                <div class="game-over-panel right">
+                    <h1>¡LE GANASTE A LA JUSTICIA!</h1>
+                    <p>¡Has completado todos los niveles!</p>
+                    <button id="play-again-button">Jugar de Nuevo</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="pause-screen" class="screen" style="display: none;">
+            <h1>PAUSA</h1>
+            <button id="resume-button">Continuar</button>
+        </div>
+
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

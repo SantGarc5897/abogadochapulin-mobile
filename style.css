@@ -11,10 +11,10 @@ body {
     user-select: none;
 }
 
-/* --- CONTENEDOR DEL JUEGO HORIZONTAL --- */
+/* --- CONTENEDOR DEL JUEGO CON TAMAÑO FIJO BASE (4.5") --- */
 #game-container {
-    width: 100vw;
-    height: 100svh; /* Usa la altura visible para evitar cortes por la UI del navegador */
+    width: 640px;  /* Ancho fijo para layout de teléfono de 4.5" */
+    height: 360px;  /* Alto fijo (relación 16:9) */
     border: none;
     position: relative;
     overflow: hidden;

@@ -322,14 +322,5 @@ document.addEventListener('DOMContentLoaded', function() {
     resumeButton.addEventListener('click', togglePause);
     jumpButton.addEventListener('click', performJump);
 
-    // Ajuste del tamaño del área de juego
-    function adjustGameSize() {
-        const gameArea = document.getElementById('game-container');
-        gameArea.style.height = `${window.innerHeight}px`;
-    }
-    adjustGameSize();
-    window.addEventListener('resize', adjustGameSize);
-    window.addEventListener('orientationchange', adjustGameSize);
-
     startScreen.style.display = 'flex';
 });

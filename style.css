@@ -4,22 +4,26 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #333; /* Fondo oscuro para que el juego resalte */
+    background-color: #333;
     font-family: Arial, sans-serif;
     overflow: hidden;
     -webkit-user-select: none;
     user-select: none;
 }
 
-/* --- CONTENEDOR DEL JUEGO CON TAMAÑO FIJO BASE (4.5") --- */
+/* --- CONTENEDOR FLEXIBLE Y CON ASPECT RATIO --- */
 #game-container {
-    width: 640px;  /* Ancho fijo para layout de teléfono de 4.5" */
-    height: 360px;  /* Alto fijo (relación 16:9) */
+    height: 100svh;  /* Ocupa el 100% del alto visible real */
+    aspect-ratio: 9 / 12; /* Más alto y menos ancho que 16:9 */
+    
+    /* Limites para que no se deforme en pantallas muy anchas o muy altas */
+    max-width: 100vw; 
+    max-height: 100vh;
+
     border: none;
     position: relative;
     overflow: hidden;
     background-color: #2c2c2c;
-    /* Líneas de carretera adaptadas a horizontal */
     background-image: 
         repeating-linear-gradient(to right, #f0c541 0, #f0c541 20px, transparent 20px, transparent 40px),
         repeating-linear-gradient(to right, #f0c541 0, #f0c541 20px, transparent 20px, transparent 40px);
@@ -30,7 +34,7 @@ body {
 
 /* --- MENSAJE DE ORIENTACIÓN --- */
 #orientation-message {
-    display: none; /* Oculto por defecto */
+    display: none; 
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
@@ -60,7 +64,6 @@ body {
     100% { transform: rotate(-90deg); }
 }
 
-/* --- Media Query para detectar orientación vertical --- */
 @media screen and (orientation: portrait) {
     #game-container {
         display: none;
@@ -79,14 +82,13 @@ body {
     color: #fff;
     text-shadow: 1px 1px 2px black;
 }
-#score-display { left: 70px; } /* Ajustado para dar espacio al botón de pausa */
+#score-display { left: 70px; }
 #money-display { right: 10px; }
 
-/* --- BOTÓN DE PAUSA REUBICADO --- */
 #pause-button {
     position: absolute;
     top: 8px;
-    left: 20px; /* Movido a la izquierda */
+    left: 20px;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -102,7 +104,6 @@ body {
     border-radius: 2px;
 }
 
-/* --- BOTÓN DE SALTO --- */
 #jump-button {
     position: absolute;
     bottom: 20px;
@@ -118,7 +119,7 @@ body {
     cursor: pointer;
     z-index: 25;
     box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    display: none; /* Oculto por defecto, se controla con JS */
+    display: none;
     justify-content: center;
     align-items: center;
 }
@@ -202,7 +203,7 @@ body {
 }
 @keyframes fly-off {
     0% { transform: translateY(0) rotate(0); opacity: 1; }
-    100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; } /* Animación ajustada */
+    100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
 }
 
 .collectible {
@@ -214,17 +215,19 @@ body {
     right: -70px;
 }
 
+/* --- CAMBIO CLAVE PARA ASEGURAR VISIBILIDAD DEL CONTENIDO --- */
 .screen {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly; /* Distribuye el espacio para evitar cortes */
     align-items: center;
     text-align: center;
     z-index: 20;
     box-sizing: border-box;
     padding: 15px;
+    overflow-y: auto; /* AÑADIDO CRÍTICO: Permite scroll si el contenido no cabe */
 }
 
 #start-screen { background-color: rgba(255, 255, 255, 0.9); color: #333; }
@@ -278,9 +281,9 @@ body {
     position: relative;
     z-index: 30;
     width: 95%;
-    max-width: 800px; /* Aumentado para vista horizontal */
+    max-width: 800px;
     display: flex;
-    flex-direction: row; /* Cambiado a fila para vista horizontal */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 20px;
@@ -305,7 +308,7 @@ body {
     width: 100%;
 }
 
-#game-over-screen h1 { color: #e74c3c; font-size: 4vw; } /* Tamaño de fuente ajustado */
+#game-over-screen h1 { color: #e74c3c; font-size: 4vw; }
 #game-over-screen p { color: #333; }
 .final-score-text { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; }
 
